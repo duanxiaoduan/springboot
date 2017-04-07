@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-   <!-- <parent>
+<!--    <parent>
         <groupId>com.bimt</groupId>
         <artifactId>bimt-parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
@@ -35,6 +35,10 @@
         <orika.version>1.4.6</orika.version>
         <druid.version>1.0.22</druid.version>
         <fastjson.version>1.2.1</fastjson.version>
+
+        <!--profile属性-->
+        <package.target>develop</package.target>
+        <war.name>ROOT</war.name>
     </properties>
 
     <dependencyManagement>
@@ -190,13 +194,89 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--日志包-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.9</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <version>1.7.8</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
+        <!--测试包-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.1</version>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-servlet_3.0_spec</artifactId>
+            <version>1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>2.0.0</version>
+        </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>env-develop</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <package.target>develop</package.target>
+            </properties>
+        </profile>
+        <profile>
+            <id>env-test</id>
+            <properties>
+                <package.target>test</package.target>
+            </properties>
+        </profile>
+        <profile>
+            <id>env-c_test</id>
+            <properties>
+                <package.target>c_test</package.target>
+            </properties>
+        </profile>
+        <profile>
+            <id>env-official</id>
+            <properties>
+                <package.target>official</package.target>
+                <war.name>ROOT-${project.artifactId}</war.name>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <finalName>spboot</finalName>
         <resources>
@@ -214,6 +294,7 @@
                     <include>**\*.xls</include>
                     <include>**\*.xlsx</include>
                 </includes>
+                <filtering>true</filtering>
             </resource>
             <resource>
                 <directory>${project.basedir}\src\main\resources</directory>
@@ -229,8 +310,37 @@
                     <include>**\*.xls</include>
                     <include>**\*.xlsx</include>
                 </includes>
+                <filtering>true</filtering>
             </resource>
         </resources>
+        <testResources>
+            <testResource>
+                <directory>src\test\java</directory>
+                <includes>
+                    <include>**\*.properties</include>
+                    <include>**\*.xml</include>
+                    <include>**\*.tld</include>
+                    <include>**\*.doc</include>
+                    <include>**\*.docx</include>
+                    <include>**\*.xls</include>
+                    <include>**\*.xlsx</include>
+                </includes>
+                <filtering>false</filtering>
+            </testResource>
+            <testResource>
+                <directory>src\test\resources</directory>
+                <includes>
+                    <include>**\*.properties</include>
+                    <include>**\*.xml</include>
+                    <include>**\*.tld</include>
+                    <include>**\*.doc</include>
+                    <include>**\*.docx</include>
+                    <include>**\*.xls</include>
+                    <include>**\*.xlsx</include>
+                </includes>
+                <filtering>false</filtering>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -270,6 +380,28 @@
                     <target>${java.target.version}</target>
                     <encoding>${file.encoding}</encoding>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>add-resource</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources/env/${package.target}</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
