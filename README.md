@@ -1,9 +1,11 @@
+ 
  /**
      * 转树形结构
      * @param parent
      * @param list
      */
     public void addChildFromList(final ResearchDirectionIndexDTO parent, List<ResearchDirectionIndexDTO> list) {
+	
         Collection<ResearchDirectionIndexDTO> children = Collections2.filter(list, new Predicate<ResearchDirectionIndexDTO>() {
             @Override
             public boolean apply(ResearchDirectionIndexDTO input) {
