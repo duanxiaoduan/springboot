@@ -1,5 +1,22 @@
  
- /**
+ 
+ 	class ResearchDirectionIndexDTO {
+	
+		private String des;
+
+		private String desEn;
+
+		private Integer level;
+
+		private Boolean isLeaf;
+
+		private String parentId;
+
+		private List<ResearchDirectionIndexDTO> children;
+	}
+ 
+ 
+	/**
      * 转树形结构
      * @param parent
      * @param list
@@ -22,19 +39,6 @@
         }
     }
 	
-	class ResearchDirectionIndexDTO {
-	
-		private String des;
 
-		private String desEn;
-
-		private Integer level;
-
-		private Boolean isLeaf;
-
-		private String parentId;
-
-		private List<ResearchDirectionIndexDTO> children;
-	}
    
 
