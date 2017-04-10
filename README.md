@@ -2,6 +2,8 @@
  
  	class ResearchDirectionIndexDTO {
 	
+		private String id;
+	
 		private String des;
 
 		private String desEn;
